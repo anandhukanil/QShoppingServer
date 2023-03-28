@@ -1,7 +1,7 @@
 import { Request } from "express";
 
 export interface IRequest extends Request {
-  user: string
+  user?: string
 }
 
 export interface IAddress {
@@ -25,7 +25,13 @@ export interface IUserData extends IUser {
   hash: string;
 }
 
+export interface IRefreshToken {
+  token: string;
+  validity: string;
+}
+
 export enum Models {
   User = "User",
   Address = "Address",
+  RefreshToken = "RefreshToken"
 }

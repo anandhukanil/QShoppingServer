@@ -19,6 +19,15 @@
       "error",
       "always"
   ],
-  "code": 120
+  "max-len": [
+    "error",
+    { "code": 120 }
+  ],
+  "no-duplicate-imports": "error",
+  "no-unused-vars": "error",
+  "no-console": [
+    "error",
+    { "allow": ["error"]}
+  ]
   }
 }

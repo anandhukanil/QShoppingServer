@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import UserModel from "../models/user";
 
-export const updateUserController: RequestHandler = async (req, res, next) => {
+export const updateUserController: RequestHandler = async (req, res) => {
   const { id: userId } = req.body;
 
   try {
@@ -12,26 +12,28 @@ export const updateUserController: RequestHandler = async (req, res, next) => {
         new: true,
       }
     );
+    if (!response?.toJSON()) {
+      res.status(404).send("User not found.");
+      return;
+    }
 
-    res.json(response);
+    res.json(response.toJSON());
   } catch (error) {
     res.status(400).json({ message: error?.message });
   }
 };
 
-export const getUserController: RequestHandler = async (req, res, next) => { "fffdfdf dsfdfds sdfdsfdsf dsffdsfasdafs asfaff"
-  const { id: userId } = req.body;
+export const getUserController: RequestHandler = async (req, res) => {
+  const { id: userId } = req.params;
 
   try {
-    const response = await UserModel.findByIdAndUpdate(
-      userId,
-      req.body,
-      {
-        new: true,
-      }
-    );
+    const response = await UserModel.findById(userId);
+    if (!response?.toJSON()) {
+      res.status(404).send("User not found.");
+      return;
+    }
 
-    res.json(response);
+    res.json(response.toJSON());
   } catch (error) {
     res.status(400).json({ message: error?.message });
   }
