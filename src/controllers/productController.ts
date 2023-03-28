@@ -35,7 +35,7 @@ export const searchProductsController: RequestHandler = async (req, res) => {
   try {
     const data = await axios.get(`https://dummyjson.com/products/search?q=${query}`);
 
-    res.json(data.data);
+    res.json(data.data?.products);
   } catch (error) {
     console.error(error);
     res.status(500).send("Something went wrong");
