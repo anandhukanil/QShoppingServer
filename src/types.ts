@@ -4,6 +4,20 @@ export interface IRequest extends Request {
   user?: string
 }
 
+export interface IProduct {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  discountPercentage: number;
+  rating: number;
+  stock: number;
+  brand: string;
+  category: string;
+  thumbnail: string;
+  images: string[];
+}
+
 export interface IAddress {
   addressLine1: string;
   city: string;
@@ -23,6 +37,9 @@ export interface IUser {
 
 export interface IUserData extends IUser {
   hash: string;
+  cartItems: {item: IProduct; count: number;}[];
+  wishlistItems: IProduct[];
+  orders: {item: IProduct; count: number;}[];
 }
 
 export interface IRefreshToken {
@@ -33,5 +50,6 @@ export interface IRefreshToken {
 export enum Models {
   User = "User",
   Address = "Address",
-  RefreshToken = "RefreshToken"
+  RefreshToken = "RefreshToken",
+  Product = "Product"
 }

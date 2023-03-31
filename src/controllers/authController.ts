@@ -61,7 +61,7 @@ export const logoutController: RequestHandler = async (req, res) => {
 };
 
 export const refreshTokenController: RequestHandler = async (req, res) => {
-  const { refreshToken, user } = req.body;
+  const { refreshToken } = req.body;
   const accessSecret = process.env.JWT_ACCESS_SECRET || "";
   const refreshSecret = process.env.JWT_REFRESH_SECRET || "";
 
@@ -77,16 +77,17 @@ export const refreshTokenController: RequestHandler = async (req, res) => {
       return;
     }
     const decrypted = await jwt.verify(validToken.token, refreshSecret) as JwtPayload;
-    if (decrypted.username !== user.email) {
+    const user = await UserModel.findOne({ email: decrypted.username });
+    if (!user?.email) {
       res.status(403).send("Incorrect token");
       return;
     }
     const {accessToken, refreshToken: newRefreshToken} = generateTokens(
-      user, {accessSecret, refreshSecret}
+      user?.toJSON(), {accessSecret, refreshSecret}
     );
 
     await RefreshTokenModel.findByIdAndUpdate(validToken.id, { token: newRefreshToken });
-    res.status(200).json({accessToken, refreshToken});        
+    res.status(200).json({accessToken, refreshToken: newRefreshToken, user: user?.toJSON()});        
   } catch (err) {
     console.error(err);
     res.status(500).send("Something went wrong");

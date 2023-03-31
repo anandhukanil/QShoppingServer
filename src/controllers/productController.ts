@@ -1,15 +1,14 @@
 import { RequestHandler } from "express";
 import axios from "axios";
+import ProductModel from "../models/product";
 
 export const getAllProductsController: RequestHandler = async (req, res) => {
   const { limit } = req.query;
   
   try {
-    const data = await axios.get("https://dummyjson.com/products", {
-      params: { limit }
-    });
+    const data = await ProductModel.find().limit((limit && Number(limit)) as number);
 
-    res.json(data.data?.products);
+    res.json(data);
   } catch (error) {
     console.error(error);
     res.status(500).send("Something went wrong");
@@ -20,9 +19,14 @@ export const getProductController: RequestHandler = async (req, res) => {
   const { id: productId } = req.params;
   
   try {
-    const data = await axios.get(`https://dummyjson.com/products/${productId}`);
+    const data = await ProductModel.findOne({ id: productId });
 
-    res.json(data.data);
+    if (!data?.toJSON()) {
+      res.sendStatus(404);
+      return;
+    }
+
+    res.json(data.toJSON());
   } catch (error) {
     console.error(error);
     res.status(500).send("Something went wrong");
@@ -33,9 +37,9 @@ export const searchProductsController: RequestHandler = async (req, res) => {
   const { query } = req.query;
   
   try {
-    const data = await axios.get(`https://dummyjson.com/products/search?q=${query}`);
+    const data = await ProductModel.find({$text: {$search: query as string}});
 
-    res.json(data.data?.products);
+    res.json(data);
   } catch (error) {
     console.error(error);
     res.status(500).send("Something went wrong");

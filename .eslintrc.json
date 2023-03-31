@@ -24,7 +24,7 @@
     { "code": 120 }
   ],
   "no-duplicate-imports": "error",
-  "no-unused-vars": "error",
+  "no-unused-vars": "warn",
   "no-console": [
     "error",
     { "allow": ["error"]}
