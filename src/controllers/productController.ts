@@ -1,5 +1,4 @@
 import { RequestHandler } from "express";
-import axios from "axios";
 import ProductModel from "../models/product";
 
 export const getAllProductsController: RequestHandler = async (req, res) => {
