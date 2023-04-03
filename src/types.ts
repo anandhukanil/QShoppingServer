@@ -39,7 +39,7 @@ export interface IUserData extends IUser {
   hash: string;
   cartItems: {item: IProduct; count: number;}[];
   wishlistItems: IProduct[];
-  orders: {item: IProduct; count: number;}[];
+  orders: { items: {item: IProduct; count: number;}[], ordered: string }[];
 }
 
 export interface IRefreshToken {

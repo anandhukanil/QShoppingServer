@@ -89,7 +89,9 @@ export const checkoutOrderController: RequestHandler = async (req, res) => {
   try {
     const response = await UserModel.findByIdAndUpdate(
       userId,
-      { $push: { orders: { items, ordered: new Date().toISOString() } } },
+      { $push: { orders: { items, ordered: new Date().toISOString() } },
+        $set: { cartItems: [] }
+      },
       {
         new: true,
       }
@@ -122,6 +124,38 @@ export const updateCartItemCountController: RequestHandler = async (req, res) =>
       { cartItems: updatedCart },
       { new: true },
     );
+
+    res.json(response?.toJSON());
+  } catch (error) {
+    res.status(400).json({ message: error?.message });
+  }
+};
+
+export const wishListItemController: RequestHandler = async (req, res) => {
+  const { id: userId, item, action } = req.body;
+
+  try {
+    const data = await UserModel.findById(userId);
+    if(!data?.toJSON()) {
+      res.status(404).send("User not found.");
+      return;
+    }
+    let response;
+    if (action === "remove") {
+      response = await UserModel.findByIdAndUpdate(
+        userId,
+        { $pullAll: {
+          wishlistItems: [item],
+        } },
+        { new: true },
+      );
+    } else {
+      response = await UserModel.findByIdAndUpdate(
+        userId,
+        { $push: { wishlistItems: item } },
+        { new: true },
+      );
+    }
 
     res.json(response?.toJSON());
   } catch (error) {

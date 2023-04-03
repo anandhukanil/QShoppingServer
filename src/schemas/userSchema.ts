@@ -6,7 +6,7 @@ import productSchema from "./productSchema";
 const userSchema = new Schema<IUserData>({
   email: { type: String, required: true, immutable: true },
   firstName: { type: String, required: true },
-  hash: { type: String, required: true },
+  hash: { type: String },
   id: String,
   lastName: String,
   age: Number,
