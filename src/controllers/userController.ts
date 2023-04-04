@@ -1,5 +1,7 @@
 import { RequestHandler } from "express";
+import ProductModel from "../models/product";
 import UserModel from "../models/user";
+import { IProduct } from "../types";
 
 export const updateUserController: RequestHandler = async (req, res) => {
   const { id: userId } = req.body;
@@ -93,7 +95,7 @@ export const removeFromCartController: RequestHandler = async (req, res) => {
 };
 
 export const checkoutOrderController: RequestHandler = async (req, res) => {
-  const { id: userId, items } = req.body;
+  const { id: userId, items }: {id: string, items: {item: IProduct; count: number;}[]} = req.body;
 
   try {
     const response = await UserModel.findByIdAndUpdate(
@@ -108,6 +110,13 @@ export const checkoutOrderController: RequestHandler = async (req, res) => {
     if (!response?.toJSON()) {
       res.status(404).send("User not found.");
       return;
+    }
+
+    for (const order of items) {
+      await ProductModel.findOneAndUpdate(
+        { id: order.item?.id },
+        { $inc: { stock: -order.count } }
+      );
     }
 
     res.json(response.toJSON());
