@@ -57,7 +57,7 @@ export const addToCartController: RequestHandler = async (req, res) => {
         .map(
           (_product) => _product.item?.id === product?.id
             ? { ..._product, count: _product.count + (count || 1) }
-            : product
+            : _product
         )
       : [...currentCart, { item: product, count: (count || 1) }];
 
