@@ -33,6 +33,8 @@ export interface IUser {
   mobileNumber?: string;
   age?: number;
   address?: IAddress;
+  securityQuestion?: string;
+  securityAnswer?: string;
 }
 
 export interface IUserData extends IUser {

@@ -158,11 +158,13 @@ export const signupController: RequestHandler = async (req, res) => {
         return;
       }
       const hash = bcrypt.hashSync(userData.password, 8);
+      const securityAnswerHash = bcrypt.hashSync(userData.securityAnswer, 8);
       delete userData.password;
       delete userData.id;
 
       const user = await UserModel.create({
         ...userData,
+        securityAnswer: securityAnswerHash,
         hash,
       });
 
@@ -184,5 +186,41 @@ export const signupController: RequestHandler = async (req, res) => {
     }    
   } else {
     res.status(400).send("Invalid data");
+  }
+};
+
+export const resetController: RequestHandler = async (req, res) => {
+  const { username, securityQuestion, securityAnswer, password } = req.body;
+
+  if (username && password && securityAnswer && securityQuestion) {
+    try {
+      const user = await UserModel.findOne({ email: username });
+      if (!user?.email) {
+        res.status(404).send("User not found");
+        return;
+      } else if (!user?.hash) {
+        res.status(404).send("Please login with google");
+        return;
+      }
+      const answerIsValid = bcrypt.compareSync(securityAnswer, user.securityAnswer as string);
+
+      if (!((user.securityQuestion === securityQuestion) && answerIsValid)) {
+        res.status(400).send("Security question or answer is not correct");
+        return;
+      }
+
+      const hash = bcrypt.hashSync(password, 8);
+
+      await UserModel.findByIdAndUpdate(user?.toJSON().id, {
+        hash,
+      });
+
+      res.send({ success: true });
+
+    } catch (error) {
+      res.status(500).send("Something went wrong");
+    }    
+  } else {
+    res.status(400).send("Username or security question is incorrect");
   }
 };

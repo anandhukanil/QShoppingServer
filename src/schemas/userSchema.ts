@@ -12,6 +12,8 @@ const userSchema = new Schema<IUserData>({
   age: Number,
   mobileNumber: Number,
   address: addressSchema,
+  securityQuestion: String,
+  securityAnswer: String,
   cartItems: [{
     item: { type: productSchema, required: true },
     count: { type: Number, required: true }
