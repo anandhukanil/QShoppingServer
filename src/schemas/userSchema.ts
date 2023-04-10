@@ -10,7 +10,7 @@ const userSchema = new Schema<IUserData>({
   id: String,
   lastName: String,
   age: Number,
-  mobileNumber: Number,
+  mobileNumber: String,
   address: addressSchema,
   securityQuestion: String,
   securityAnswer: String,
@@ -32,6 +32,7 @@ const userSchema = new Schema<IUserData>({
       converted.id = converted._id?.toString();
       delete converted._id;
       delete converted.hash;
+      delete converted.securityAnswer;
     }
   }
 });
